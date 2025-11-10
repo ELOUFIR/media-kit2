@@ -1067,12 +1067,19 @@ class NativePlayer extends PlatformPlayer {
 
       if (track.uri || track.data) {
         final String uri;
-        if (track.uri) {
+        if (track.uri && track.srtContent == null) {
           uri = track.id;
         } else if (track.data) {
           // Save the subtitle data to a temporary [File].
           final temp = await TempFile.create();
           await temp.write_(track.id);
+          // Delete the temporary [File] upon [dispose].
+          release.add(temp.delete_);
+          uri = temp.uri.toString();
+        } else if (track.srtContent != null) {
+          // Save the subtitle data to a temporary [File].
+          final temp = await TempFile.create();
+          await temp.write_(track.srtContent);
           // Delete the temporary [File] upon [dispose].
           release.add(temp.delete_);
           uri = temp.uri.toString();
@@ -1685,6 +1692,7 @@ class NativePlayer extends PlatformPlayer {
               String? title;
               String? language;
               bool? image;
+              bool def = false;
               bool? albumart;
               String? codec;
               String? decoder;
@@ -1737,6 +1745,9 @@ class NativePlayer extends PlatformPlayer {
                       break;
                     case 'albumart':
                       albumart = map.values[j].u.flag > 0;
+                      break;
+                    case 'default':
+                      def = map.values[j].u.flag > 0;
                       break;
                   }
                 }
@@ -1821,6 +1832,9 @@ class NativePlayer extends PlatformPlayer {
                       rotate: rotate,
                       par: par,
                       audiochannels: audiochannels,
+                      uri: false,
+                      data: false,
+                      def: def
                     ),
                   );
                   break;
@@ -1844,6 +1858,8 @@ class NativePlayer extends PlatformPlayer {
                       rotate: rotate,
                       par: par,
                       audiochannels: audiochannels,
+                      uri: false,
+                      def: def
                     ),
                   );
                   break;
