@@ -1833,7 +1833,6 @@ class NativePlayer extends PlatformPlayer {
                       par: par,
                       audiochannels: audiochannels,
                       uri: false,
-                      data: false,
                       def: def
                     ),
                   );
@@ -1859,6 +1858,7 @@ class NativePlayer extends PlatformPlayer {
                       par: par,
                       audiochannels: audiochannels,
                       uri: false,
+                      data: false,
                       def: def
                     ),
                   );
